@@ -8,5 +8,5 @@ Markdown1 contains the R Markdown code for fitting the linear regression model c
 
 Notebook3 contains the code for predicting the new gradients of expression for Vesicular Stomatitis Virus gene-shuffled variants. It also has the code for predicting the replicative fitness of these variants. This notebook requires access to the file containing a previously published model of VSV that can be found in file NPMGL_Model_SSA.xml. The outputs associated with this file can be found in Folder3. This file also generates the images required to generate figure 4.
 
-Note - The choice of storing the previous model is justified in the original github associated with the model's publication:
+Note - The choice of storing the previous model in .xml format is justified in the original github associated with the model's publication:
 https://github.com/Peccoud-Lab/VSV_Stochastic_Model_2023
