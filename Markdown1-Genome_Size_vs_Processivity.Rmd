@@ -1,0 +1,97 @@
+
+
+```{r}
+library(lme4)
+library(tidyverse)
+library(car)
+library(ggplot2)
+library(broom)
+library(emmeans)
+library(ggpubr)
+library(caret)
+library(knitr)
+library(glue)
+library(ggplot2)
+library(ggpmisc)
+
+
+```
+
+
+
+
+```{r}
+#"RSV1","RSV2"
+rates = c()
+
+viruses <- c("VSV", "MeV", "PIV2", "PIV3", "PIV5", "MuV", "MV", "EBOV")
+j = 1
+for (i in viruses) {
+  file <- glue('Top_100_Fit_Stats/{i
+               }_fits.csv')
+  df <- read.csv(file )
+  rates[j] <- df$Best.Fit.Estimate
+  j = j+1
+}
+
+file <- glue('Top_100_Fit_Stats/RSV1_fits2.csv')
+df <- read.csv(file )
+rates[j] <- df$Best.Fit.Estimate
+j = j+1
+
+file <- glue('Top_100_Fit_Stats/RSV2_fits2.csv')
+df <- read.csv(file )
+rates[j] <- df$Best.Fit.Estimate
+j = j+1
+
+genome_lengths <- c(11161, 15854,15621,15237, 15147, 15360,18292,18985,15132,15132 )
+```
+
+
+
+
+```{r}
+
+mean_pros = 1/(1-rates)
+df <- data.frame(genome_lengths,mean_pros)
+df <- df[order(df$mean_pros),]
+mod_gn <- lm(mean_pros~genome_lengths, data=df)
+performance::check_model(mod_gn, check="linearity")
+performance::check_model(mod_gn, check="homogeneity")
+performance::check_model(mod_gn, check="qq")
+## no apparent violations of assumptions
+tidy(mod_gn, conf.int=TRUE, conf.level=0.95)
+
+```
+
+```{r}
+summary(mod_gn)
+```
+
+
+```{r}
+
+g_df <- ggplot(df, aes(x=genome_lengths, y=mean_pros)) + 
+  theme_bw() +
+  geom_point() +
+  ylab("Mean Number of Bases per Walk") +
+  xlab("Genome Length (bases)") +
+  geom_smooth(method="lm", se=FALSE) +
+  stat_poly_eq(aes(label = paste(..eq.label.., ..rr.label.., sep = "~~~")),
+               label.x.npc = "right", label.y.npc = 0.9, 
+               formula = y ~ x, parse = TRUE, size = 6) +theme(
+    axis.title.x = element_text(size = 16),  # Axis title size for X
+    axis.title.y = element_text(size = 16),  # Axis title size for Y
+    axis.text.x = element_text(size = 16),   # Tick label size for X
+    axis.text.y = element_text(size = 16)    # Tick label size for Y
+  )
+ggsave("Figures/Fig3/linear_regression.svg", plot = g_df, width = 6, height = 4, device = "svg")
+
+g_df
+
+
+```
+
+
+
+
