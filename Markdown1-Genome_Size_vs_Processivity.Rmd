@@ -24,29 +24,26 @@ library(ggpmisc)
 #"RSV1","RSV2"
 rates = c()
 
-viruses <- c("VSV", "MeV", "PIV2", "PIV3", "PIV5", "MuV", "MV", "EBOV")
+viruses <- c("VSV", "MeV", "PIV2", "PIV3", "PIV5", "MuV")
 j = 1
 for (i in viruses) {
-  file <- glue('Top_100_Fit_Stats/{i
+  file <- glue('File2-Top_100_Fit_Stats/{i
+               }_fits.csv')
+  df <- read.csv(file )
+  rates[j] <- df$Best.Fit.Estimate
+  j = j+1
+}
+viruses2 <- c("EBOV", "MV")
+for (i in viruses2) {
+  file <- glue('File2-Top_100_Fit_Stats/{i
                }_fits.csv')
   df <- read.csv(file )
   rates[j] <- df$Best.Fit.Estimate
   j = j+1
 }
 
-file <- glue('Top_100_Fit_Stats/RSV1_fits2.csv')
-df <- read.csv(file )
-rates[j] <- df$Best.Fit.Estimate
-j = j+1
-
-file <- glue('Top_100_Fit_Stats/RSV2_fits2.csv')
-df <- read.csv(file )
-rates[j] <- df$Best.Fit.Estimate
-j = j+1
-
-genome_lengths <- c(11161, 15854,15621,15237, 15147, 15360,18292,18985,15132,15132 )
+genome_lengths <- c(11161, 15894 ,15638 ,15462, 15246 ,15384 , 18959, 19114)
 ```
-
 
 
 
@@ -71,27 +68,28 @@ summary(mod_gn)
 
 ```{r}
 
+viruses <- c("VSV", "MeV", "PIV2", "PIV3", "PIV5", "MuV", "EBOV", "MV")
+df <- df[order(rownames(df)),]
 g_df <- ggplot(df, aes(x=genome_lengths, y=mean_pros)) + 
   theme_bw() +
   geom_point() +
   ylab("Mean Number of Bases per Walk") +
   xlab("Genome Length (bases)") +
-  geom_smooth(method="lm", se=FALSE) +
+  geom_smooth(method="lm", se=TRUE) +
   stat_poly_eq(aes(label = paste(..eq.label.., ..rr.label.., sep = "~~~")),
                label.x.npc = "right", label.y.npc = 0.9, 
-               formula = y ~ x, parse = TRUE, size = 6) +theme(
+               formula = y ~ x, parse = TRUE, size = 6) +
+   xlim(10000, max(df$genome_lengths) + 1000) +  
+  ylim(0, max(df$mean_pros) + 500) +  
+  geom_text(aes(label = viruses), vjust = -0.5, hjust = 0.5, size = 4) +  # Annotating each dot
+  theme(
     axis.title.x = element_text(size = 16),  # Axis title size for X
     axis.title.y = element_text(size = 16),  # Axis title size for Y
     axis.text.x = element_text(size = 16),   # Tick label size for X
     axis.text.y = element_text(size = 16)    # Tick label size for Y
   )
 ggsave("Figures/Fig3/linear_regression.svg", plot = g_df, width = 6, height = 4, device = "svg")
-
 g_df
 
-
 ```
-
-
-
 

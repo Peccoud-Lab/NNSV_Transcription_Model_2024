@@ -1,2 +1,2 @@
-,Mean of Top 100 Fit Estimates,Std of Top 100 Fit Estimates,Max of Top 100 Fit Estimates,Min of Top 1% Fit Estimates,Best Fit Estimate
-p(walk),0.9997067875749722,9.873052903864225e-11,0.9997067877569898,0.9997067874456677,0.9997067877522214
+,Mean of Top 100 Fit Estimates,Std of Top 100 Fit Estimates,Max of Top 100 Fit Estimates,Min of Top 1% Fit Estimates,Best Fit Estimate,Best Fit NMSE
+p(walk),0.999707242345786,1.2573597252329118e-10,0.9997072425259182,0.9997072421895404,0.9997072425224173,3.3936065352734084
