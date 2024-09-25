@@ -1,9 +1,0 @@
-,Parameter,Mean of Top 100 Fit Estimates,Std of Top 100 Fit Estimates,Max of Top 100 Fit Estimates,Min of Top 100 Fit Estimates,Best Fit Estimate,Best Fit NMSE
-RSV1,p(walk),0.99991,4.17e-10,0.99991,0.99991,0.99991,5.46e-04
-RSV1,ptransc,0.88986,1.06e-05,0.88989,0.88984,0.88987,5.46e-04
-RSV2,p(walk),0.99972,1.49e-10,0.99972,0.99972,0.99972,2.03e+01
-RSV2,ptransc,0.97934,3.24e-07,0.97934,0.97934,0.97934,2.03e+01
-EBOV,p(walk),0.99982,2.88e-08,0.99982,0.99982,0.99982,5.63e+00
-EBOV,ptransc,0.06082,5.31e-05,0.06093,0.06075,0.06093,5.63e+00
-MV,p(walk),0.99986,1.62e-09,0.99986,0.99986,0.99986,1.43e+01
-MV,ptransc,0.16779,1.41e-05,0.16782,0.16777,0.1678,1.43e+01

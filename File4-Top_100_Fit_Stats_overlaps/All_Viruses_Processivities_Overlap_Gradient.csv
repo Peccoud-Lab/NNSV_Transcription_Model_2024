@@ -1,0 +1,7 @@
+,Parameter,Mean of Top 100 Fit Estimates,Std of Top 100 Fit Estimates,Max of Top 100 Fit Estimates,Min of Top 100 Fit Estimates,Best Fit Estimate,Best Fit WMSE
+RSV,p(walk),0.99972,1.75e-10,0.99972,0.99972,0.99972,2.03e+01
+RSV,ptransc,0.97934,3.65e-07,0.97934,0.97934,0.97934,2.03e+01
+EBOV,p(walk),0.99982,3.13e-08,0.99982,0.99982,0.99982,5.63e+00
+EBOV,ptransc,0.06081,5.73e-05,0.06092,0.06075,0.06092,5.63e+00
+MV,p(walk),0.99986,1.43e-09,0.99986,0.99986,0.99986,1.43e+01
+MV,ptransc,0.16779,1.49e-05,0.16782,0.16777,0.16781,1.43e+01
