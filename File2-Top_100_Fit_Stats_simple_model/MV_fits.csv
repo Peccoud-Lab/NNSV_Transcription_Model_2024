@@ -1,2 +1,2 @@
-,Mean of Top 100 Fit Estimates,Std of Top 100 Fit Estimates,Max of Top 100 Fit Estimates,Min of Top 100 Fit Estimates,Best Fit Estimate,Best Fit WMSE
-p(walk),0.9998505944403486,1.2541241781895405e-09,0.9998505959031976,0.9998505923535786,0.9998505959018625,21.288908344494107
+,Mean of Top 100 Fit Estimates,Std of Top 100 Fit Estimates,Max of Top 100 Fit Estimates,Min of Top 100 Fit Estimates,Best Fit Estimate,Best Fit Log Likelihood
+p(walk),0.9998433993562803,4.8099921812130394e-12,0.9998433993661533,0.9998433993454598,0.9998433993661533,-23240.307020534317

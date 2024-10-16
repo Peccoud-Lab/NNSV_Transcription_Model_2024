@@ -57,6 +57,12 @@ performance::check_model(mod_gn, check="qq")
 tidy(mod_gn, conf.int=TRUE, conf.level=0.95)
 
 ```
+```{r}
+# show the average number of base pairs traversed
+mean_pros
+```
+
+
 
 ```{r}
 summary(mod_gn)
@@ -72,7 +78,7 @@ g_df <- ggplot(df, aes(x=genome_lengths, y=mean_pros)) +
   geom_point() +
   ylab("Mean Number of Bases per Walk") +
   xlab("Genome Length (bases)") +
-  geom_smooth(method="lm", se=TRUE) +
+  geom_smooth(method="lm", se=FALSE) +
   stat_poly_eq(aes(label = paste(..eq.label.., ..rr.label.., sep = "~~~")),
                label.x.npc = "right", label.y.npc = 0.9, 
                formula = y ~ x, parse = TRUE, size = 6) +
