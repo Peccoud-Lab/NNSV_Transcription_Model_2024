@@ -1,7 +1,0 @@
-,Parameter,Mean of Top 100 Fit Estimates,Std of Top 100 Fit Estimates,Max of Top 100 Fit Estimates,Min of Top 100 Fit Estimates,Best Fit Estimate,Best Fit Log Likelihood
-RSV,p(walk),0.99974,9.17e-10,0.99974,0.99974,0.99974,-2.26e+06
-RSV,ptransc,0.94092,4.97e-06,0.94094,0.94091,0.94092,-2.26e+06
-EBOV,p(walk),0.99975,1.51e-04,0.99999,0.99943,0.99984,-1.22e+05
-EBOV,ptransc,0.25486,1.69e-01,0.55855,0.01088,0.03403,-1.22e+05
-MV,p(walk),0.99985,8.85e-05,0.99999,0.99967,0.99984,-2.32e+04
-MV,ptransc,0.43242,2.96e-01,0.9162,0.00225,0.17269,-2.32e+04
