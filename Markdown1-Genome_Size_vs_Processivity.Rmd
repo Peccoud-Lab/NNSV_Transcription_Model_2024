@@ -21,18 +21,31 @@ library(ggrepel)
 ```{r}
 
 
-df <- read.csv("Folder1-Parameter_Fits/all_viruses_best_fits.csv" )
-#df <- df[seq(1, nrow(df), 2), ]
+df <- read.csv("Folder2-MCMC_Outputs/model_MCMC_statistics.csv" )
+df <- df[seq(1, nrow(df), by = 2), ]
+viruses <- df$Virus
 
-viruses <- df$X
-rates <- df$p.walk.
-genome_lengths <- c(11161, 15894 ,15638 ,15462, 15246 , 15384, 18959, 19114, 15191)
-mean_pros = 1/(1-rates)
+df$X2.5..Quantile <- 1 - df$X2.5..Quantile
+df$X97.5..Quantile <- 1 - df$X97.5..Quantile
+df$Mean <- (df$X97.5..Quantile + df$X2.5..Quantile)/2
+
 ```
+
+
 
 ```{r}
 
-mean_pros = (1-rates)
+genome_lengths <- c(11161, 15894 ,15638 ,15462, 15246 , 15384, 18959, 19114, 15191)
+mean_pros = df$Mean
+ci_width <- df$X2.5..Quantile - df$X97.5..Quantile  
+
+weights <- ci_width / 2
+
+```
+
+
+```{r}
+
 df <- data.frame(genome_lengths,mean_pros)
 df <- df[order(df$mean_pros),]
 mod_gn <- lm(mean_pros~genome_lengths, data=df)
@@ -68,7 +81,7 @@ viruses <- c("VSV", "MeV", "PIV2", "PIV3", "PIV5", "MuV", "EBOV", "MV","RSV")
 df <- df[order(rownames(df)),]
 g_df <- ggplot(df, aes(x=genome_lengths, y=mean_pros)) + 
   theme_bw() +
-  geom_point() +
+  geom_point() + geom_errorbar(aes(ymin = mean_pros-weights, ymax = mean_pros+weights), width = 400) +
   ylab(expression("P"["off"])) +
   xlab("Genome Length (bases)") +
   geom_smooth(method="lm", se=FALSE) +

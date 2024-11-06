@@ -1,0 +1,160 @@
+
+
+```{r}
+library(lme4)
+library(tidyverse)
+library(car)
+library(ggplot2)
+library(broom)
+library(emmeans)
+library(ggpubr)
+library(caret)
+library(knitr)
+library(glue)
+library(ggplot2)
+library(ggpmisc)
+library(ggrepel)
+
+```
+
+
+```{r}
+# load in data
+
+obs_df <- read.csv("Folder3-Gene_Shuffle_Predictions/prot_expression_ratio_data.csv")
+
+pred_df <- read.csv("Folder3-Gene_Shuffle_Predictions/expression_ratio_predictions.csv")
+
+```
+
+
+
+```{r}
+# pivot data table to better format
+long_pred <- pred_df %>%
+  pivot_longer(cols = N:L, names_to = "Variable", values_to = "Predicted_expression")
+
+```
+```{r}
+# pivot data table to better format
+long_obs <- obs_df %>%
+  pivot_longer(cols = N:L, names_to = "Variable", values_to = "Observed_expression")
+long_obs$Predicted_expression <- long_pred$Predicted_expression
+long_obs$Gene <- factor(long_obs$Variable, levels = c("N", "P", "M", "G", "L")) 
+
+```
+
+
+
+```{r}
+# check model assumptions
+mod_gn <- lm(Predicted_expression~Observed_expression, data=long_obs)
+performance::check_model(mod_gn, check="linearity")
+performance::check_model(mod_gn, check="homogeneity")
+performance::check_model(mod_gn, check="qq")
+tidy(mod_gn, conf.int=TRUE, conf.level=0.95)
+# there are some potential minor violations. mainly appear to be due to the one outlier
+```
+
+
+```{r}
+
+summary(mod_gn)
+
+```
+
+
+```{r}
+
+
+g_df <- ggplot(long_obs, aes(x = Observed_expression, y = Predicted_expression, color = Gene, shape = Gene)) +
+  theme_bw() +
+  geom_point(size = 3) +
+  xlim(0, 0.6) +
+  ylim(0, 0.45) +
+  xlab("Observed Relative Expression (Protein Level)") +
+  ylab("Predicted Relative\nExpression (Transcript Level)") +
+  geom_smooth(aes(x = Observed_expression, y = Predicted_expression, group = 1), 
+              method = "lm", se = FALSE, color = "black", size = 1) + 
+  theme(
+    axis.text = element_text(size = 16),           
+    axis.title = element_text(size = 20, face = "bold"),
+    legend.title = element_text(size = 14, face = "bold"), 
+    legend.text = element_text(size = 12),
+    legend.position = "bottom"
+  ) +
+  stat_poly_eq(aes(label = paste(..eq.label.., ..rr.label.., sep = "~~~"), group = 1),
+               label.x.npc = "right", label.y.npc = 0.9, 
+               formula = y ~ x, parse = TRUE, size = 6) +
+  guides(color = guide_legend(override.aes = list(size = 4))) 
+
+# Save the plot in high resolution
+ggsave("Figures/Fig4/all_data_plot.svg", plot = g_df, device = "svg", width = 10, height = 6, dpi = 300)
+
+# Display the plot
+g_df
+
+
+```
+
+```{r}
+sub1_data <- long_obs %>%
+  filter(Dataset == "10.1128/jvi.73.6.4705-4712.1999")
+sub2_data <- long_obs %>%
+  filter(Dataset == "10.1128/jvi.74.17.7895-7902.2000")
+```
+
+
+```{r}
+
+g_df <- ggplot(sub1_data, aes(x = Observed_expression, y = Predicted_expression, color = Gene, shape = Gene)) + 
+  theme_bw() +
+  geom_point() +
+  xlab("Observed Relative Expression (Protein Level)") +
+  ylab("Predicted Relative\nExpression (Transcript Level)") +
+    xlim(0, 0.6) +
+  ylim(0, 0.45) +
+  geom_smooth(aes(group = 1), method = "lm", se = FALSE, color = "black") + 
+  facet_wrap(~ Variant, nrow = 2)+
+  coord_fixed(ratio = 1) + 
+  theme(
+    axis.text = element_text(size = 8),           
+    axis.title = element_text(size = 10, face = "bold"),
+    legend.title = element_text(size = 12, face = "bold"), 
+    legend.text = element_text(size = 12),
+    legend.position = "bottom"
+  )
+
+g_df
+ggsave("Figures/Fig4/Ball_et_al_plot.svg", plot = g_df,  device = "svg")
+
+
+```
+```{r}
+
+g_df <- ggplot(sub2_data, aes(x = Observed_expression, y = Predicted_expression, color = Gene, shape = Gene)) + 
+  theme_bw() +
+  geom_point() +
+  xlab("Observed Relative Expression (Protein Level)") +
+  ylab("Predicted Relative\nExpression (Transcript Level)") +
+    xlim(0, 0.6) +
+  ylim(0, 0.45) +
+  geom_smooth(aes(group = 1), method = "lm", se = FALSE, color = "black") +
+  facet_wrap(~ Variant, nrow = 2) +
+  coord_fixed(ratio = 1) + 
+  theme(
+    axis.text = element_text(size = 8),           
+    axis.title = element_text(size = 10, face = "bold"),
+    legend.title = element_text(size = 12, face = "bold"), 
+    legend.text = element_text(size = 12),
+    legend.position = "bottom"
+  )
+g_df
+
+ggsave("Figures/Fig4/Flanagan_et_al_plot.svg", plot = g_df, device = "svg")
+
+
+```
+
+
+
