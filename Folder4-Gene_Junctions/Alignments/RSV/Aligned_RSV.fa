@@ -1,0 +1,35 @@
+>NS1_NS2_Junction  (38 bp)
+--------------------AATTATATTTTGAATTGT----------------------------------CTTCTGTT
+TTTACCCCGTTT
+
+>NS2_N_Junction  (45 bp)
+--------------------CATTAAATTTTAATTCCTCTCTATA---------------------------TTCTATCT
+TCTACCCCGTTT
+
+>N_P_Junction  (22 bp)
+-------------------TCAATTATTTTTT------------------------------------------------
+---ACCCCGTTT
+
+>P_M_Junction  (31 bp)
+------------------ATCAATGTTTTTTT-------------------------------------------CCTTT
+CCCACCCCGTTT
+
+>M_SH_Junction  (30 bp)
+-------------------TCAATTATTTTTTATATG-------------------------------------------
+TGTACCCCGTTT
+
+>SH_G_Junction  (64 bp)
+--------------------CAATTAATTTTTAT--------CAGTATTGTTACTTGATCCTATAGTTCTGATTGTTATT
+GTAACCCCGTTT
+
+>G_F_Junction  (72 bp)
+--------------------CAATGAATTTTTGTATAATAGTGTTTTTCGGTACTGGTTGAATTTGTCTTAGTTTTATTT
+GAGACCCCGTTT
+
+>F_M2_Junction  (65 bp)
+--------------------CAATATATTTTGTGTTAACTTACGGTCTAATTGAATGGTAGACAT-------TTTTACTT
+TTGACCCCGTTT
+
+>M2_L_Junction  (68 bp)
+CCCTGTTTTACCTAGGGTAATAATTACCTTTAAGACGATTACAAATAG------------------------ATTGGCTA
+TCAATAAATTTT

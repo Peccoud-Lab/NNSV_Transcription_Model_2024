@@ -1,0 +1,29 @@
+>NP_VP35_Junction  (28 bp)
+TAATTCTTT-----------------------------------------------------------------------
+-------------------------------------------------------------------TTTGATTACTACT
+TCTAAT-------
+
+>VP35_VP40_Junction  (18 bp)
+--------------------------------------------------------------------------------
+---------------------------------------------------------------------------CTACT
+TCTAATTCTTTTT
+
+>VP40_GP_Junction  (28 bp)
+TAATTCTTT-----------------------------------------------------------------------
+-------------------------------------------------------------------TTTAGCCGCTACT
+TCTAAT-------
+
+>GP_VP30_Junction  (18 bp)
+--------------------------------------------------------------------------------
+---------------------------------------------------------------------------CTACT
+TCTAATTCTTTTT
+
+>VP30_VP24_Junction  (167 bp)
+TAATTCTTTTTGACTGCCTTGTATTTAAGAAATACGAAGTTCGACACCTCCTCCACAAACCATAACCGATAACAATATAA
+TGTTAGTTATTGTTCGAACATTTTTATAACAAGAACAAAGTTCTCCATCTAACACTGGCCTTTACGATTTGATTACTACT
+TCTAATT------
+
+>VP24_L_Junction  (34 bp)
+TAATTCTT------------------------------------------------------------------------
+-------------------------------------------------------------------TTTTCGGACTCCT
+TCTAATTCTTTTT
