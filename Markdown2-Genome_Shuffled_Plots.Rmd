@@ -23,7 +23,8 @@ library(ggrepel)
 
 obs_df <- read.csv("Folder3-Gene_Shuffle_Predictions/prot_expression_ratio_data.csv")
 
-pred_df <- read.csv("Folder3-Gene_Shuffle_Predictions/expression_ratio_predictions.csv")
+pred_df <- read.csv("Folder3-Gene_Shuffle_Predictions/RAM_mean_predictions.csv")
+pred_std <- read.csv("Folder3-Gene_Shuffle_Predictions/RAM_std_predictions.csv")
 
 ```
 
@@ -35,6 +36,7 @@ long_pred <- pred_df %>%
   pivot_longer(cols = N:L, names_to = "Variable", values_to = "Predicted_expression")
 
 ```
+
 ```{r}
 # pivot data table to better format
 long_obs <- obs_df %>%
@@ -56,25 +58,35 @@ tidy(mod_gn, conf.int=TRUE, conf.level=0.95)
 # there are some potential minor violations. mainly appear to be due to the one outlier
 ```
 
+```{r}
+0.8478145 - 0.696286017
+```
 
 ```{r}
-
 summary(mod_gn)
-
 ```
 
 
-```{r}
 
+```{r}
+long_std <- pred_std %>%
+  pivot_longer(cols = N:L, names_to = "Variable", values_to = "Predicted_sd")
+
+long_obs$Predicted_sd <- long_std$Predicted_sd
 
 g_df <- ggplot(long_obs, aes(x = Observed_expression, y = Predicted_expression, color = Gene, shape = Gene)) +
   theme_bw() +
   geom_point(size = 3) +
+geom_errorbar(aes(ymin = Predicted_expression - 2 * Predicted_sd,
+                  ymax = Predicted_expression + 2 * Predicted_sd),
+              width = 0.02,
+              size = 0.8,
+              alpha = 0.8) +
   xlim(0, 0.6) +
   ylim(0, 0.45) +
   xlab("Observed Relative Expression (Protein Level)") +
   ylab("Predicted Relative\nExpression (Transcript Level)") +
-  geom_smooth(aes(x = Observed_expression, y = Predicted_expression, group = 1), 
+  geom_smooth(aes(group = 1), 
               method = "lm", se = FALSE, color = "black", size = 1) + 
   theme(
     axis.text = element_text(size = 16),           
@@ -82,14 +94,110 @@ g_df <- ggplot(long_obs, aes(x = Observed_expression, y = Predicted_expression, 
     legend.title = element_text(size = 14, face = "bold"), 
     legend.text = element_text(size = 12),
     legend.position = "bottom"
-  ) +
+  ) + 
   stat_poly_eq(aes(label = paste(..eq.label.., ..rr.label.., sep = "~~~"), group = 1),
                label.x.npc = "right", label.y.npc = 0.9, 
                formula = y ~ x, parse = TRUE, size = 6) +
-  guides(color = guide_legend(override.aes = list(size = 4))) 
+  guides(color = guide_legend(override.aes = list(size = 4)))
+
+ggsave("Figures/Fig6/all_RAM_plot.svg", plot = g_df, device = "svg", width = 10, height = 6, dpi = 300)
+
+g_df
+
+
+```
+gene_cols <- ggplot_build(g_df)$plot$scales$get_scales("colour")$palette(5)
+names(gene_cols) <- levels(long_obs$Gene)
+gene_cols
+
+
+
+```{r}
+
+# load in data
+
+obs_df <- read.csv("Folder3-Gene_Shuffle_Predictions/prot_expression_ratio_data.csv")
+
+pred_df <- read.csv("Folder3-Gene_Shuffle_Predictions/ss_mean_predictions.csv")
+pred_std <- read.csv("Folder3-Gene_Shuffle_Predictions/ss_std_predictions.csv")
+```
+
+
+
+```{r}
+# pivot data table to better format
+long_pred <- pred_df %>%
+  pivot_longer(cols = N:L, names_to = "Variable", values_to = "Predicted_expression")
+
+```
+
+```{r}
+# pivot data table to better format
+long_obs <- obs_df %>%
+  pivot_longer(cols = N:L, names_to = "Variable", values_to = "Observed_expression")
+long_obs$Predicted_expression <- long_pred$Predicted_expression
+long_obs$Gene <- factor(long_obs$Variable, levels = c("N", "P", "M", "G", "L")) 
+
+```
+
+
+
+
+```{r}
+# check model assumptions
+mod_gn <- lm(Predicted_expression~Observed_expression, data=long_obs)
+performance::check_model(mod_gn, check="linearity")
+performance::check_model(mod_gn, check="homogeneity")
+performance::check_model(mod_gn, check="qq")
+tidy(mod_gn, conf.int=TRUE, conf.level=0.95)
+# there are some potential minor violations. mainly appear to be due to the one outlier
+```
+
+```{r}
+summary(mod_gn)
+```
+
+
+```{r}
+0.87153194 - 0.71055594
+```
+
+
+
+```{r}
+long_std <- pred_std %>%
+  pivot_longer(cols = N:L, names_to = "Variable", values_to = "Predicted_sd")
+
+long_obs$Predicted_sd <- long_std$Predicted_sd
+
+g_df <- ggplot(long_obs, aes(x = Observed_expression, y = Predicted_expression, color = Gene, shape = Gene)) +
+  theme_bw() +
+  geom_point(size = 3) +
+geom_errorbar(aes(ymin = Predicted_expression - 2 * Predicted_sd,
+                  ymax = Predicted_expression + 2 * Predicted_sd),
+              width = 0.02,
+              size = 0.8,
+              alpha = 0.8) +
+  xlim(0, 0.6) +
+  ylim(0, 0.45) +
+  xlab("Observed Relative Expression (Protein Level)") +
+  ylab("Predicted Relative\nExpression (Transcript Level)") +
+  geom_smooth(aes(group = 1), 
+              method = "lm", se = FALSE, color = "black", size = 1) + 
+  theme(
+    axis.text = element_text(size = 16),           
+    axis.title = element_text(size = 20, face = "bold"),
+    legend.title = element_text(size = 14, face = "bold"), 
+    legend.text = element_text(size = 12),
+    legend.position = "bottom"
+  ) + 
+  stat_poly_eq(aes(label = paste(..eq.label.., ..rr.label.., sep = "~~~"), group = 1),
+               label.x.npc = "right", label.y.npc = 0.9, 
+               formula = y ~ x, parse = TRUE, size = 6) +
+  guides(color = guide_legend(override.aes = list(size = 4)))
 
 # Save the plot in high resolution
-ggsave("Figures/Fig4/all_data_plot.svg", plot = g_df, device = "svg", width = 10, height = 6, dpi = 300)
+ggsave("Figures/Fig6/all_ss_plot.svg", plot = g_df, device = "svg", width = 10, height = 6, dpi = 300)
 
 # Display the plot
 g_df
@@ -98,63 +206,138 @@ g_df
 ```
 
 ```{r}
-sub1_data <- long_obs %>%
-  filter(Dataset == "10.1128/jvi.73.6.4705-4712.1999")
-sub2_data <- long_obs %>%
-  filter(Dataset == "10.1128/jvi.74.17.7895-7902.2000")
-```
+library(ggplot2)
+library(dplyr)
+library(scales)
 
+df <- read.csv("Folder3-Gene_Shuffle_Predictions/model_absolute_errors.csv")
 
-```{r}
+genes <- c("N","P","M","G","L")
+df$Model <- factor(df$Model, levels = c("RAM", "Stop-Start"))
+df$Gene  <- factor(df$Gene,  levels = genes)
 
-g_df <- ggplot(sub1_data, aes(x = Observed_expression, y = Predicted_expression, color = Gene, shape = Gene)) + 
-  theme_bw() +
-  geom_point() +
-  xlab("Observed Relative Expression (Protein Level)") +
-  ylab("Predicted Relative\nExpression (Transcript Level)") +
-    xlim(0, 0.6) +
-  ylim(0, 0.45) +
-  geom_smooth(aes(group = 1), method = "lm", se = FALSE, color = "black") + 
-  facet_wrap(~ Variant, nrow = 2)+
-  coord_fixed(ratio = 1) + 
-  theme(
-    axis.text = element_text(size = 8),           
-    axis.title = element_text(size = 10, face = "bold"),
-    legend.title = element_text(size = 12, face = "bold"), 
-    legend.text = element_text(size = 12),
-    legend.position = "bottom"
+gene_cols <- setNames(hue_pal()(length(genes)), genes)
+
+gene_shapes <- c(
+  N = 16,  
+  P = 17,  
+  M = 15,
+  G = 3, 
+  L = 7  
+)
+
+summary_df <- df %>%
+  group_by(Model) %>%
+  summarise(
+    mean = mean(Absolute_Error),
+    se   = sd(Absolute_Error)/sqrt(n()),
+    ci   = 1.96 * se,
+    .groups = "drop"
   )
 
-g_df
-ggsave("Figures/Fig4/Ball_et_al_plot.svg", plot = g_df,  device = "svg")
+mae_ram <- mean(df$Absolute_Error[df$Model == "RAM"])
+mae_ss  <- mean(df$Absolute_Error[df$Model == "Stop-Start"])
+rel_improve <- abs(mae_ram - mae_ss) / mae_ram * 100
 
+cat(sprintf("Overall MAE RAM: %g\n", mae_ram))
+cat(sprintf("Overall MAE Stop-Start: %g\n", mae_ss))
+cat(sprintf("Relative improvement (RAM->SS): %.2f%%\n\n", rel_improve))
 
-```
-```{r}
+per_gene <- df %>%
+  group_by(Gene, Model) %>%
+  summarise(
+    mean = mean(Absolute_Error),
+    sd   = sd(Absolute_Error),
+    .groups = "drop"
+  ) %>%
+  mutate(`mean_pm_2sd` = sprintf("%0.3g ± %0.3g", mean, 2*sd))
 
-g_df <- ggplot(sub2_data, aes(x = Observed_expression, y = Predicted_expression, color = Gene, shape = Gene)) + 
+print(per_gene)
+
+n_each <- sum(df$Model == "RAM")
+stopifnot(sum(df$Model == "Stop-Start") == n_each)
+
+err_ram <- df$Absolute_Error[df$Model == "RAM"]
+err_ss  <- df$Absolute_Error[df$Model == "Stop-Start"]
+
+tt <- t.test(err_ram, err_ss, paired = TRUE)
+print(tt)
+
+metrics_text <- sprintf(
+  "MAE RAM: %.3g\nMAE SS : %.3g\nPaired t-test p: %.2g",
+  mae_ram, mae_ss, tt$p.value
+)
+
+mae_ram <- mean(df$Absolute_Error[df$Model == "RAM"])
+mae_ss  <- mean(df$Absolute_Error[df$Model == "Stop-Start"])
+
+pct_diff <- (mae_ss - mae_ram) / mae_ram * 100
+
+metrics_text <- sprintf(
+  "MAE RAM: %.3g\nMAE SS : %.3g",
+  mae_ram, mae_ss, pct_diff
+)
+
+p <- ggplot(df, aes(x = Model, y = Absolute_Error)) +
+  geom_violin(
+    aes(group = Model),
+    trim = FALSE,
+    fill = "grey90",
+    color = "grey35",
+    linewidth = 0.8
+  ) + ylim(0, 0.25) +
+  geom_jitter(
+    aes(color = Gene, shape = Gene),
+    width = 0.30,
+    size = 3.0,    
+    alpha = 0.75,
+    stroke = 0.8  
+  ) +
+  geom_errorbar(
+    data = summary_df,
+    aes(x = Model, y = mean, ymin = mean - ci, ymax = mean + ci),
+    width = 0.12,
+    linewidth = 1.0,
+    inherit.aes = FALSE,
+    color = "black"
+  ) +
+  geom_point(
+    data = summary_df,
+    aes(x = Model, y = mean),
+    size = 3.4,
+    inherit.aes = FALSE,
+    color = "black"
+  ) +
+  scale_color_manual(values = gene_cols) +
+  scale_shape_manual(values = gene_shapes) +
+  labs(y = "Absolute Error", x = NULL, color = "Gene", shape = "Gene") +
+  annotate(
+    "label",
+    x = 0.1, y = 0.245,        
+    label = metrics_text,
+    hjust = 0, vjust = 1,
+    size = 5,
+    label.size = 0.25
+  ) +
+  coord_cartesian(ylim = c(0, 0.25)) +
   theme_bw() +
-  geom_point() +
-  xlab("Observed Relative Expression (Protein Level)") +
-  ylab("Predicted Relative\nExpression (Transcript Level)") +
-    xlim(0, 0.6) +
-  ylim(0, 0.45) +
-  geom_smooth(aes(group = 1), method = "lm", se = FALSE, color = "black") +
-  facet_wrap(~ Variant, nrow = 2) +
-  coord_fixed(ratio = 1) + 
   theme(
-    axis.text = element_text(size = 8),           
-    axis.title = element_text(size = 10, face = "bold"),
-    legend.title = element_text(size = 12, face = "bold"), 
+    axis.text = element_text(size = 16),
+    axis.title = element_text(size = 20, face = "bold"),
+    legend.title = element_text(size = 14, face = "bold"),
     legend.text = element_text(size = 12),
-    legend.position = "bottom"
+    legend.position = "bottom",
+    plot.margin = margin(10, 10, 10, 10)
+  ) +
+  guides(
+    color = guide_legend(override.aes = list(size = 4)),
+    shape = guide_legend(override.aes = list(size = 4))
   )
-g_df
-
-ggsave("Figures/Fig4/Flanagan_et_al_plot.svg", plot = g_df, device = "svg")
-
+ggsave("Figures/Fig6/all_barplot.svg", plot = p, device = "svg", width = 10, height = 6, dpi = 300)
 
 ```
+
+
 
 
 
